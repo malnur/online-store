@@ -8,6 +8,10 @@ import SupportIcon from './icons/IconSupport.vue'
 </script>
 
 <template>
+  <div class="md:container mx-auto">
+    <img src="../assets/img/logo.png" alt="" />
+  </div>
+
   <WelcomeItem>
     <template #icon>
       <DocumentationIcon />
