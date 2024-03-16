@@ -80,7 +80,7 @@
 
     <!-- Checkout -->
     <a
-      class="mt-8 py-5 flex justify-center gap-3 bg-primary"
+      class="w-64 mx-auto mt-8 py-5 flex justify-center gap-3 rounded-lg bg-primary"
       href="#"
       v-show="!isMinimum"
       @click="onCheckoutClick()"
@@ -92,7 +92,7 @@
         src="../assets/icon/bank-card-fill.svg"
         alt=""
       />
-      <p class="text-3xl uppercase text-white">Proceed to Checkout</p>
+      <p class="text-3xl uppercase text-white">Checkout</p>
     </a>
   </main>
 </template>
