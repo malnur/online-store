@@ -9,8 +9,20 @@ export class APIService {
     return API_URL
   }
 
-  getAllCategory() {
+  getCategories() {
     const url = `${API_URL}/category`
+    let data = axios.get(url).then((response) => response.data)
+    return data
+  }
+
+  getFruitsOfCategory(categoryId) {
+    const url = `${API_URL}/fruit/category/` + categoryId
+    let data = axios.get(url).then((response) => response.data)
+    return data
+  }
+
+  getFruit(fruitId) {
+    const url = `${API_URL}/fruit/` + fruitId
     let data = axios.get(url).then((response) => response.data)
     return data
   }

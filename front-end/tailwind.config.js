@@ -17,6 +17,10 @@ export default {
         red: {
           DEFAULT: '#edd7d7',
           dark: '#a94442'
+        },
+        disable: {
+          DEFAULT: '#e1e1e1',
+          dark: '#949494'
         }
       }
     }
