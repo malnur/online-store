@@ -42,22 +42,30 @@
       </div>
       <div v-if="isOption" class="flex items-center gap-2">
         <p class="text-primary">Selected option:</p>
-        <select class="px-4 py-2 text-base border border-secondary outline-0">
-          <option v-for="option in fruit.options" :key="option._id" value="0.3;(300g)" selected>
+        <select
+          class="px-4 py-2 text-base border border-secondary outline-0"
+          v-model="currentOption"
+        >
+          <option v-for="option in fruit.options" :key="option._id" :value="option.value" selected>
             ({{ option.value }}{{ option.uom }}) - £{{ option.price }}
           </option>
         </select>
       </div>
       <hr v-if="isOption" class="my-4 h-[2px] bg-secondary" />
       <div v-show="!anavailable" class="flex justify-between items-center">
-        <p class="text-xl font-bold text-secondary">£{{ fruit.price }}</p>
+        <p class="text-xl font-bold text-secondary">{{ total > 0 ? '£' + total : '' }}</p>
         <div class="flex gap-2">
           <input
-            class="w-14 h-10 pl-2 text-2xl border border-secondary outline-0"
+            class="w-16 h-10 pl-2 text-2xl border border-secondary outline-0"
             type="number"
-            value="1"
+            min="1"
+            v-model="count"
           />
-          <div class="px-4 py-2 flex bg-primary">
+          <a
+            class="px-4 py-2 flex bg-primary"
+            href="#"
+            @click="storeCart.addItem(fruit, count, currentOption)"
+          >
             <img
               width="20"
               height="20"
@@ -65,8 +73,8 @@
               src="../assets/icon/shopping-cart.svg"
               alt=""
             />
-            <p class="ml-1 uppercase text-base font-bold text-white">Add to Basket</p>
-          </div>
+            <span class="ml-1 uppercase text-base font-bold text-white">Add to Basket</span>
+          </a>
         </div>
       </div>
     </div>
@@ -87,12 +95,12 @@
             alt=""
           />
           <p class="mb-1 text-sm font-bold text-primary">{{ item.name }}</p>
-          <p class="mb-1 text-lg font-bold uppercase text-green">In stock</p>
-          <div class="mb-3 flex justify-between">
-            <p class="font-bold text-secondary">{{ item.uom }}</p>
-            <p class="font-bold text-secondary">£{{ item.price }}</p>
-          </div>
         </RouterLink>
+        <p class="mb-1 text-lg font-bold uppercase text-green">In stock</p>
+        <div class="mb-3 flex justify-between">
+          <p class="font-bold text-secondary">{{ item.uom }}</p>
+          <p class="font-bold text-secondary">£{{ item.price }}</p>
+        </div>
         <div class="flex justify-between">
           <div class="px-4 py-2 flex bg-primary">
             <img
@@ -118,20 +126,31 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useCartStore } from '@/stores/cart.js'
 import { APIService } from '@/services/APIService.js'
 import { TextUtils } from '@/utils/text.js'
 
 const route = useRoute()
 const apiService = new APIService()
+const storeCart = useCartStore()
 const text = new TextUtils()
-const fruit = reactive({})
 const mainImage = ref(null)
+const currentOption = ref(null)
+const count = ref(1)
+const fruit = reactive({})
 const relations = reactive([])
 
 const currentRoute = computed(() => route.path)
 const isOption = computed(() => fruit.options?.length > 0)
 const hasImages = computed(() => fruit.images?.length > 1)
 const anavailable = computed(() => fruit.price === null)
+const total = computed(() => {
+  let price = fruit.price
+  if (currentOption.value) {
+    price = fruit.options?.find((item) => item.value == currentOption.value).price
+  }
+  return Math.round(100 * price * count.value) / 100
+})
 
 onMounted(() => {
   loadFruit(getDefaultFruit())
@@ -145,6 +164,13 @@ const loadFruit = (fruitId) => {
   apiService.getFruit(fruitId).then((data) => {
     Object.assign(fruit, data)
     mainImage.value = fruit.images[0]
+    if (fruit.options) {
+      const uom = fruit.uom
+      const found = fruit.options.find((item) => uom.indexOf(item.value) > -1)
+      if (found) {
+        currentOption.value = found.value
+      }
+    }
     loadRelations()
   })
 }

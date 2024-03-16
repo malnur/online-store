@@ -7,7 +7,10 @@
   <!-- Main Content -->
   <main class="my-8 container mx-auto flex flex-col gap-4">
     <!-- Warnings -->
-    <div class="mx-auto p-2 flex items-center gap-2 border-[3px] bg-red border-red-dark">
+    <div
+      class="mx-auto p-2 flex items-center gap-2 border-[3px] bg-red border-red-dark"
+      v-show="isMinimum"
+    >
       <img
         width="42"
         height="42"
@@ -16,8 +19,7 @@
         alt=""
       />
       <p class="tracking-wider font-semibold text-red-dark">
-        Minimum order for delivery is £30, minimum order value for collection is £20. Please review
-        your order before proceeding.
+        Minimum order for delivery is £30. Please review your order before proceeding.
       </p>
     </div>
 
@@ -30,73 +32,59 @@
       <span class="text-right">SUBTOTAL</span>
     </div>
     <hr class="h-[2px] bg-gray-300" />
-    <div class="grid grid-cols-6 gap-y-2 items-center text-gray-400">
+    <div
+      class="grid grid-cols-6 gap-y-2 items-center text-gray-400"
+      v-for="(item, index) in fruits"
+      :key="index"
+    >
+      <!-- Items -->
       <div class="flex items-center gap-1">
+        <a href="#" @click="onRemoveClick(item.id)">
+          <img
+            width="24"
+            height="24"
+            class="filter-red"
+            src="../assets/icon/close-circle-fill.svg"
+            alt="remove item"
+          />
+        </a>
         <img
-          width="24"
-          height="24"
-          class="filter-red"
-          src="../assets/icon/close-circle-fill.svg"
+          class="w-14 h-14 object-cover overflow-clip animate-fade"
+          :src="`/img/${item.image}`"
           alt=""
         />
-        <img class="w-1/2 object-cover overflow-clip animate-fade" src="/img/261.jpg" alt="" />
       </div>
       <div class="col-span-2 flex flex-col gap-1">
-        <p class="font-light tracking-widest text-primary">Pear - William</p>
+        <p class="font-light tracking-widest text-primary">{{ item.name }}</p>
         <div class="px-4 py-1 w-1/3 flex flex-col bg-slate-100">
           <p class="font-semibold text-green">IN STOCK</p>
-          <p class="font-bold text-primary">Item weigth:</p>
-          <p class="text-xs text-primary">0.166 kg</p>
+          <div v-show="isWeight(item.uom)">
+            <p class="font-bold text-primary">Item weigth:</p>
+            <p class="text-xs text-primary">{{ item.uom }}</p>
+          </div>
         </div>
       </div>
-      <p class="text-base text-right">£0.75</p>
-      <p class="text-right">
-        <input
-          class="w-14 h-10 pl-2 text-2xl border border-primary outline-0"
-          type="number"
-          value="1"
-        />
-      </p>
-      <p class="text-base text-right">£0.75</p>
-
-      <div class="flex items-center gap-1">
-        <img
-          width="24"
-          height="24"
-          class="filter-red"
-          src="../assets/icon/close-circle-fill.svg"
-          alt=""
-        />
-        <img class="w-1/2 object-cover overflow-clip animate-fade" src="/img/261.jpg" alt="" />
-      </div>
-      <div class="col-span-2 flex flex-col gap-1">
-        <p class="font-light tracking-widest text-primary">Pear - William</p>
-        <div class="px-4 py-1 w-1/3 flex flex-col bg-slate-100">
-          <p class="font-semibold text-green">IN STOCK</p>
-          <p class="font-bold text-primary">Item weigth:</p>
-          <p class="text-xs text-primary">0.166 kg</p>
-        </div>
-      </div>
-      <p class="text-base text-right">£0.75</p>
-      <p class="text-right">
-        <input
-          class="w-14 h-10 pl-2 text-2xl border border-primary outline-0"
-          type="number"
-          value="1"
-        />
-      </p>
-      <p class="text-base text-right">£0.75</p>
+      <p class="text-base text-right">£{{ item.price }}</p>
+      <p class="text-base text-right">{{ item.count }}</p>
+      <p class="text-base text-right">£{{ item.subtotal }}</p>
     </div>
-    <hr class="h-[2px] bg-gray-300" />
+    <hr class="h-[2px] bg-gray-300" v-show="!isMinimum" />
 
     <!-- Totals -->
     <h3 class="text-4xl text-center tracking-wide uppercase text-primary">BASKET TOTALS</h3>
     <hr class="h-[2px] bg-gray-300" />
     <div class="mx-2 flex justify-between">
       <p class="text-xl font-bold uppercase text-primary">Total</p>
-      <p class="text-xl uppercase text-primary">£6.70</p>
+      <p class="text-xl uppercase text-primary">£{{ storeCart.total }}</p>
     </div>
-    <div class="mt-8 py-5 flex justify-center gap-3 bg-primary">
+
+    <!-- Checkout -->
+    <a
+      class="mt-8 py-5 flex justify-center gap-3 bg-primary"
+      href="#"
+      v-show="!isMinimum"
+      @click="onCheckoutClick()"
+    >
       <img
         width="32"
         height="32"
@@ -105,8 +93,63 @@
         alt=""
       />
       <p class="text-3xl uppercase text-white">Proceed to Checkout</p>
-    </div>
+    </a>
   </main>
 </template>
 
-<script setup></script>
+<script setup>
+import { reactive, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useCartStore } from '@/stores/cart.js'
+import { APIService } from '@/services/APIService.js'
+
+const router = useRouter()
+const storeCart = useCartStore()
+const apiService = new APIService()
+const fruits = reactive([])
+const isMinimum = computed(() => storeCart.total < 30)
+
+onMounted(() => {
+  loadFruits()
+})
+
+const onRemoveClick = (id) => {
+  storeCart.removeItem(id)
+  if (storeCart.count == 0) {
+    router.push('/')
+  } else {
+    loadFruits()
+  }
+}
+
+const onCheckoutClick = () => {
+  console.log('Checkout $' + storeCart.total)
+  storeCart.reset()
+  router.push('/')
+}
+
+const isWeight = (uom) => uom !== 'each'
+
+const loadFruits = () => {
+  fruits.splice(0)
+  storeCart.basket.forEach((fruit) => {
+    const fruitId = fruit.id
+    apiService.getFruit(fruitId).then((raw) => {
+      const obj = {}
+      obj.id = raw._id
+      obj.name = raw.name
+      obj.image = raw.images[0]
+      let uom = raw.uom
+      if (fruit.option) {
+        const found = raw.options.find((data) => data.value == fruit.option)
+        uom = found.value + found.uom
+      }
+      obj.uom = uom
+      obj.price = fruit.price
+      obj.count = fruit.count
+      obj.subtotal = Math.round(100 * fruit.price * fruit.count) / 100
+      fruits.push(obj)
+    })
+  })
+}
+</script>

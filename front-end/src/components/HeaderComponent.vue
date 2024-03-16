@@ -55,8 +55,8 @@
             />
           </div>
           <div class="px-6 flex flex-col">
-            <span class="text-xs text-secondary">0 items</span>
-            <span class="font-bold text-primary">$0.00</span>
+            <span class="text-xs text-secondary">{{ storeCart.count }} items</span>
+            <span class="font-bold text-primary">${{ storeCart.total }}</span>
           </div>
         </RouterLink>
       </div>
@@ -118,8 +118,11 @@
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useCommonStore } from '@/stores/common.js'
+import { useCartStore } from '@/stores/cart.js'
 
 const storeCommon = useCommonStore()
+const storeCart = useCartStore()
+
 const categories = ref([
   { id: 'apples-pears-and-rhubarb', short: 'Apples', size: 24, image: 'apple' },
   { id: 'bananas-and-grapes', short: 'Bananas', size: 28, image: 'banana' },

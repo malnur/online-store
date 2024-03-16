@@ -25,6 +25,7 @@
         class="flex justify-between px-4 py-3 uppercase cursor-pointer"
         :class="{ 'bg-highlight': item.active }"
         @click="onCategoryClick(item._id)"
+        href="#"
       >
         <span class="font-bold text-primary">{{ item.name }}</span>
         <img
@@ -48,26 +49,31 @@
               alt=""
             />
             <p class="mb-1 text-sm font-bold text-primary">{{ fruit.name }}</p>
-            <p
-              class="mb-1 text-lg font-bold uppercase text-green"
-              :class="[isAnavailable(fruit.price) ? 'text-red-dark' : '']"
-            >
-              {{ isAnavailable(fruit.price) ? 'Temporarily Anavailable' : 'In stock' }}
-            </p>
-            <div class="mb-3 flex justify-between">
-              <p class="font-bold text-secondary">
-                {{ !isAnavailable(fruit.price) ? fruit.uom : '&nbsp;' }}
-              </p>
-              <p class="font-bold text-secondary">
-                {{ !isAnavailable(fruit.price) ? '£' + fruit.price : '&nbsp;' }}
-              </p>
-            </div>
           </RouterLink>
+          <p
+            class="mb-1 text-lg font-bold uppercase text-green"
+            :class="[isAnavailable(fruit.price) ? 'text-red-dark' : '']"
+          >
+            {{ isAnavailable(fruit.price) ? 'Temporarily Anavailable' : 'In stock' }}
+          </p>
+          <div class="mb-3 flex justify-between">
+            <p class="font-bold text-secondary">
+              {{ !isAnavailable(fruit.price) ? fruit.uom : '&nbsp;' }}
+            </p>
+            <p class="font-bold text-secondary">
+              {{ !isAnavailable(fruit.price) ? '£' + fruit.price : '&nbsp;' }}
+            </p>
+          </div>
           <div
             class="flex justify-between"
             :class="{ 'justify-around': isAnavailable(fruit.price) }"
           >
-            <div v-show="!isAnavailable(fruit.price)" class="px-4 py-2 flex bg-primary">
+            <a
+              v-show="!isAnavailable(fruit.price)"
+              class="px-4 py-2 flex bg-primary"
+              href="#"
+              @click="storeCart.addItem(fruit, 1)"
+            >
               <img
                 width="20"
                 height="20"
@@ -76,7 +82,7 @@
                 alt=""
               />
               <p class="ml-1 uppercase text-base font-bold text-white">Add</p>
-            </div>
+            </a>
             <p
               class="px-4 py-2 border border-secondary text-center text-base font-bold text-secondary"
             >
@@ -95,6 +101,7 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { RouterLink } from 'vue-router'
+import { useCartStore } from '@/stores/cart.js'
 import { APIService } from '@/services/APIService.js'
 import { TextUtils } from '@/utils/text.js'
 
@@ -102,6 +109,7 @@ const DEFAULT_CATEGORY = 'apples-pears-and-rhubarb'
 
 const route = useRoute()
 const apiService = new APIService()
+const storeCart = useCartStore()
 const text = new TextUtils()
 const category = ref({})
 const categories = reactive([])
