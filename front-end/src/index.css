@@ -37,3 +37,35 @@ p {
 .filter-disable {
   filter: invert(68%) sepia(2%) saturate(18%) hue-rotate(357deg) brightness(87%) contrast(84%);
 }
+
+.filter-green {
+  filter: invert(38%) sepia(15%) saturate(7291%) hue-rotate(92deg) brightness(89%) contrast(73%);
+}
+
+.filter-orange {
+  filter: invert(73%) sepia(80%) saturate(2009%) hue-rotate(0deg) brightness(103%) contrast(107%);
+}
+
+.filter-purple {
+  filter: invert(11%) sepia(90%) saturate(5365%) hue-rotate(295deg) brightness(72%) contrast(110%);
+}
+
+.filter-brown {
+  filter: invert(29%) sepia(8%) saturate(3951%) hue-rotate(325deg) brightness(94%) contrast(86%);
+}
+
+.filter-bright-red {
+  filter: invert(39%) sepia(34%) saturate(6445%) hue-rotate(347deg) brightness(98%) contrast(90%);
+}
+
+.zoom {
+  @apply relative flex items-center justify-center overflow-hidden;
+}
+
+.zoom-image {
+  @apply absolute w-full h-full transition-all duration-500 ease-in-out transform bg-center bg-cover;
+}
+
+.zoom:hover .zoom-image {
+  @apply scale-125;
+}

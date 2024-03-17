@@ -1,11 +1,11 @@
 <template>
-  <header class="sm:container mx-auto">
-    <div class="h-11 my-5 flex justify-between">
-
+  <header class="sticky top-0 z-10 w-full backdrop-blur bg-white/90">
+    <div class="container mx-auto h-11 my-5 flex justify-between">
       <!-- Logo -->
       <RouterLink class="flex gap-2 items-center" to="/">
         <img width="40" src="/logo.png" alt="logo" />
-        <span class="text-3xl font-semibold tracking-widest text-primary hidden sm:flex"
+        <span
+          class="text-2xl xl:text-3xl font-semibold tracking-widest text-primary hover:text-secondary hidden sm:flex"
           >Fruit Market</span
         >
       </RouterLink>
@@ -18,7 +18,7 @@
             type="text"
             placeholder="Product Search"
           />
-          <a class="size-11 flex justify-center items-center bg-primary" href="#">
+          <div class="size-11 flex justify-center items-center bg-primary">
             <img
               width="20"
               height="20"
@@ -26,7 +26,7 @@
               src="../assets/icon/search.svg"
               alt="search icon"
             />
-          </a>
+          </div>
         </div>
 
         <!-- Account -->
@@ -41,17 +41,20 @@
             />
           </div>
           <div class="px-4 hidden xl:flex xl:flex-col">
-            <span class="text-xs text-secondary">My Account</span>
-            <a class="font-bold text-primary underline" href="#">Log In</a>
+            <p class="text-xs text-secondary">My Account</p>
+            <p class="font-bold text-primary underline">Log In</p>
           </div>
         </div>
 
         <!-- Cart -->
         <RouterLink
-          class="h-full flex justify-between items-center border border-primary"
+          class="h-full flex justify-between items-center border border-primary has-[#cart-img:hover]:border-secondary"
           to="/cart"
         >
-          <div class="size-11 flex justify-center items-center bg-primary">
+          <div
+            id="cart-img"
+            class="size-11 flex justify-center items-center bg-primary hover:bg-secondary"
+          >
             <img
               width="22"
               height="22"
@@ -70,23 +73,25 @@
 
     <!-- Category & Icon -->
     <div
-      class="py-2 flex items-center justify-around sm:justify-between xl:justify-around border-t border-solid border-secondary"
+      class="container mx-auto py-2 flex items-center justify-around sm:justify-between xl:justify-around border-t border-solid border-secondary"
     >
       <div
         class="xl:basis-3/4 flex justify-between"
         v-for="(category, index) in categories"
         :key="index"
       >
-        <RouterLink class="flex flex-col items-center" :to="'/list/' + category.id">
+        <RouterLink class="flex flex-col items-center hover:scale-110" :to="'/list/' + category.id">
           <img
             :width="category.size"
             :height="category.size"
-            class="filter-primary"
+            :class="`${category.css}`"
             :src="'/icon/' + category.image + '.svg'"
             alt="category"
             :title="category.short"
           />
-          <span class="mt-1 text-sm font-bold text-primary hidden sm:block">{{ category.short }}</span>
+          <span class="mt-1 text-sm font-bold text-primary hidden sm:block">{{
+            category.short
+          }}</span>
         </RouterLink>
       </div>
 
@@ -123,8 +128,8 @@
     </div>
   </header>
 
-  <!-- TODO Add sticky header to view CART -->
   <!-- TODO Add breadcrumb path -->
+  <!-- TODO activate Search Item capability -->
 </template>
 
 <script setup>
@@ -137,13 +142,31 @@ const storeCommon = useCommonStore()
 const storeCart = useCartStore()
 
 const categories = ref([
-  { id: 'apples-pears-and-rhubarb', short: 'Apples', size: 24, image: 'apple' },
-  { id: 'bananas-and-grapes', short: 'Bananas', size: 28, image: 'banana' },
-  { id: 'berriescherries-and-currants', short: 'Berries', size: 24, image: 'grapes' },
-  { id: 'citrus', short: 'Citrus', size: 24, image: 'citrus-slice' },
-  { id: 'dates-figs-and-nuts', short: 'Dates', size: 24, image: 'olive' },
-  { id: 'exotic-fruits', short: 'Exotic', size: 24, image: 'pineapple' },
-  { id: 'melon-and-mango', short: 'Melon', size: 24, image: 'watermelon-slice' },
-  { id: 'stone-fruits', short: 'Stone Fruits', size: 24, image: 'peach' }
+  {
+    id: 'apples-pears-and-rhubarb',
+    short: 'Apples',
+    size: 24,
+    image: 'apple',
+    css: 'filter-green'
+  },
+  { id: 'bananas-and-grapes', short: 'Bananas', size: 28, image: 'banana', css: 'filter-orange' },
+  {
+    id: 'berriescherries-and-currants',
+    short: 'Berries',
+    size: 24,
+    image: 'grapes',
+    css: 'filter-purple'
+  },
+  { id: 'citrus', short: 'Citrus', size: 24, image: 'citrus-slice', css: 'filter-orange' },
+  { id: 'dates-figs-and-nuts', short: 'Dates', size: 24, image: 'olive', css: 'filter-brown' },
+  { id: 'exotic-fruits', short: 'Exotic', size: 24, image: 'pineapple', css: 'filter-orange' },
+  {
+    id: 'melon-and-mango',
+    short: 'Melon',
+    size: 24,
+    image: 'watermelon-slice',
+    css: 'filter-green'
+  },
+  { id: 'stone-fruits', short: 'Stone Fruits', size: 24, image: 'peach', css: 'filter-bright-red' }
 ])
 </script>

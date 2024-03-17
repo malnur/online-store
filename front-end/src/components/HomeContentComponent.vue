@@ -9,7 +9,7 @@
       />
       <div class="container mx-auto text-white text-center">
         <div class="relative z-[2] block w-full lg:w-2/3 xl:w-1/3 px-2 xl:px-8 py-2 sm:py-4 xl:py-10 bg-primary bg-opacity-75">
-          <h1 class="text-3xl xl:text-5xl font-semibold tracking-wider">Fruits</h1>
+          <h1 class="text-3xl xl:text-5xl font-semibold tracking-wider hover:text-secondary">Fruits</h1>
           <hr class="h-[2px] max-w-16 my-6 mx-auto bg-secondary" />
           <p class="text-base text-justify tracking-wide">
             An impressive selection of exotic and seasonal fruit as well as the very best vegetables

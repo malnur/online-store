@@ -28,7 +28,7 @@ export const useCartStore = defineStore('cart', () => {
       obj.id = item._id
       obj.name = item.name
       obj.option = optionValue
-      obj.price = item.options
+      obj.price = item.options?.length > 0
         ? item.options.find((item) => item.value === optionValue).price
         : item.price
       obj.count = count

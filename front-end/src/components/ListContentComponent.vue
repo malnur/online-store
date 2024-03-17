@@ -15,20 +15,20 @@
     </div>
   </section>
 
-  <main class="my-4 xl:my-8 container mx-auto flex justify-center xl:justify-between">
+  <main class="min-h-screen my-4 xl:my-8 container mx-auto flex justify-center xl:justify-between">
 
     <!-- Categories -->
     <nav class="min-w-36 self-start border border-primary hidden xl:block">
       <p class="px-4 py-3 tracking-wider uppercase font-bold text-white bg-primary">Fresh Fruits</p>
       <a
-        class="flex justify-between px-4 py-3 uppercase cursor-pointer"
+        class="flex justify-between px-4 py-3 uppercase hover:bg-highlight"
         href="#"
         v-for="item in categories"
         :key="item._id"
         :class="{ 'bg-highlight': item.active }"
         @click="onCategoryClick(item._id)"
       >
-        <span class="font-bold text-primary">{{ item.name }}</span>
+        <p class="font-bold text-primary">{{ item.name }}</p>
         <img
           width="20"
           height="20"
@@ -41,9 +41,9 @@
     </nav>
 
     <!-- Fruits -->
-    <section class="xl:ml-4 min-h-screen flex flex-col justify-center" v-show="!loading">
-      <Loading :loading="loading" />
-      <div class="mx-auto mb-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 lg:gap-7">
+    <section class="flex-1 xl:ml-4 min-h-screen flex justify-center">
+      <Loading :loading />
+      <div class="mx-auto mb-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 lg:gap-7" v-show="!loading">
         <ItemCardComponent :item="fruit" v-for="fruit in fruits" :key="fruit._id" />
       </div>
     </section>

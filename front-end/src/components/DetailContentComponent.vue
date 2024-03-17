@@ -7,7 +7,9 @@
       alt="background"
     />
     <div class="relative z-[2] block pt-3 bg-primary bg-opacity-75">
-      <h1 class="py-4 xl:py-12 text-3xl xl:text-5xl text-center tracking-wider uppercase text-white">
+      <h1
+        class="py-4 xl:py-12 text-3xl xl:text-5xl text-center tracking-wider uppercase text-white"
+      >
         {{ fruit.name }}
       </h1>
     </div>
@@ -19,23 +21,21 @@
 
     <!-- Fruit Details -->
     <div class="my-8 flex flex-col lg:flex-row justify-center gap-4" v-show="!loading">
-
       <!-- Images -->
       <div class="basis-1/3 flex flex-col gap-2 justify-center items-center">
-        <img
-          class="w-64 lg:w-96 h-64 lg:h-96 mb-1 object-cover overflow-clip"
-          :src="`/img/${mainImage}`"
-          alt="fruit picture"
-        />
-        <div v-if="hasImages" class="w-full flex justify-center gap-2">
+        <div class="w-64 lg:w-96 h-64 lg:h-96 mb-1 rounded-lg shadow-lg zoom">
+          <img class="object-cover zoom-image" :src="`/img/${mainImage}`" alt="fruit picture" />
+        </div>
+        <a v-if="hasImages" class="w-full flex justify-center gap-2" href="#">
           <img
-            class="w-32 h-32 mb-1 object-cover overflow-clip"
+            class="w-32 h-32 mb-1 object-cover hover:shadow-lg hover:shadow-slate-300"
             :src="`/img/${image}`"
             alt="fruit picture"
             v-for="image in fruit?.images"
             :key="image"
+            @click="mainImage = image"
           />
-        </div>
+        </a>
       </div>
 
       <!-- Details -->
@@ -72,7 +72,7 @@
               ref="input"
             />
             <a
-              class="px-4 py-2 flex bg-primary"
+              class="px-4 py-2 flex bg-primary hover:bg-secondary"
               href="#"
               @click="storeCart.addItem(fruit, count, currentOption)"
             >
@@ -83,7 +83,9 @@
                 src="../assets/icon/shopping-cart.svg"
                 alt="cart"
               />
-              <span class="ml-1 uppercase text-base font-bold text-white hidden sm:block">Add to Basket</span>
+              <p class="ml-1 uppercase text-base font-bold text-white hidden sm:block">
+                Add to Basket
+              </p>
             </a>
           </div>
         </div>

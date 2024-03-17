@@ -1,11 +1,9 @@
 <template>
   <div class="flex flex-col border-2 border-gray">
     <RouterLink :to="`/detail/${item._id}`">
-      <img
-        class="w-64 lg:w-96 h-64 lg:h-96 mb-1 object-cover overflow-clip"
-        :src="`/img/${item.image}`"
-        alt="background"
-      />
+      <div class="w-64 lg:w-80 h-64 lg:h-80 mb-1 zoom">
+        <img class="object-cover zoom-image" :src="`/img/${item.image}`" alt="background" />
+      </div>
       <p class="mb-1 text-sm font-bold text-primary">{{ item.name }}</p>
     </RouterLink>
     <p
@@ -24,7 +22,7 @@
     </div>
     <div class="flex justify-between" :class="{ 'justify-around': isAnavailable(item.price) }">
       <a
-        class="px-4 py-2 flex bg-primary"
+        class="px-4 py-2 flex bg-primary hover:bg-secondary"
         href="#"
         v-show="!isAnavailable(item.price)"
         @click="storeCart.addItem(item, 1, item.option)"
@@ -38,9 +36,12 @@
         />
         <p class="ml-1 uppercase text-base font-bold text-white">Add</p>
       </a>
-      <p class="px-4 py-2 border border-secondary text-center text-base font-bold text-secondary">
+      <RouterLink
+        class="px-4 py-2 border border-secondary text-center text-base font-bold text-secondary hover:text-white hover:bg-secondary"
+        :to="`/detail/${item._id}`"
+      >
         Info
-      </p>
+      </RouterLink>
     </div>
   </div>
 </template>

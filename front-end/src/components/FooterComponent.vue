@@ -9,7 +9,7 @@
       </div>
 
       <RouterLink to="/">
-        <img width="72" src="/logo.png" alt="logo" />
+        <img class="hover:scale-110" width="72" src="/logo.png" alt="logo" />
       </RouterLink>
 
       <div class="flex flex-col">
@@ -21,7 +21,7 @@
     <div class="pb-6 flex justify-center gap-2 text-primary">
       <p>&copy; 2024 Fruit Market Ltd</p>
       <p>|</p>
-      <a href="">Terms & Conditions</a>
+      <p>Terms & Conditions</p>
     </div>
   </footer>
 </template>

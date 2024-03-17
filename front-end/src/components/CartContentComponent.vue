@@ -1,7 +1,9 @@
 <template>
   <!-- Hero -->
   <section class="bg-primary">
-    <h1 class="py-4 xl:py-12 text-3xl xl:text-5xl text-center tracking-widest uppercase text-white">Basket</h1>
+    <h1 class="py-4 xl:py-12 text-3xl xl:text-5xl text-center tracking-widest uppercase text-white">
+      Basket
+    </h1>
   </section>
 
   <!-- Main Content -->
@@ -41,21 +43,24 @@
         :key="index"
       >
         <!-- Items -->
-        <div class="flex items-center gap-1">
+        <div class="flex justify-center items-center gap-1 xl:gap-4">
           <a class="min-w-6" href="#" @click="onRemoveClick(item.id)">
             <img
               width="24"
               height="24"
-              class="filter-red"
+              class="filter-red hover:scale-125"
               src="../assets/icon/close-circle-fill.svg"
               alt="remove item"
+              title="Delete Item"
             />
           </a>
-          <img
-            class="w-14 h-14 object-cover overflow-clip hidden sm:block"
-            :src="`/img/${item.image}`"
-            alt="item small picture"
-          />
+          <RouterLink :to="`/detail/${item.id}`">
+            <img
+              class="w-14 h-14 object-cover overflow-clip hidden sm:block hover:scale-110"
+              :src="`/img/${item.image}`"
+              alt="item small picture"
+            />
+          </RouterLink>
         </div>
         <div class="col-span-2 flex flex-col gap-1">
           <p class="font-light tracking-widest text-primary">{{ item.name }}</p>
@@ -74,7 +79,9 @@
       <hr class="h-[2px] bg-gray-300" v-show="!isMinimum" />
 
       <!-- Totals -->
-      <h3 class="text-2xl xl:text-4xl text-center tracking-wide uppercase text-primary">BASKET TOTALS</h3>
+      <h3 class="text-2xl xl:text-4xl text-center tracking-wide uppercase text-primary">
+        BASKET TOTALS
+      </h3>
       <hr class="h-[2px] bg-gray-300" />
       <div class="mx-2 flex justify-between">
         <p class="text-xl font-bold uppercase text-primary">Total</p>
@@ -83,7 +90,7 @@
 
       <!-- Checkout -->
       <a
-        class="w-64 mx-auto mt-8 py-5 flex justify-center gap-3 rounded-lg bg-primary"
+        class="w-64 mx-auto mt-8 py-5 flex justify-center gap-3 rounded-lg bg-primary hover:bg-secondary"
         href="#"
         v-show="!isMinimum"
         @click="onCheckoutClick()"
@@ -104,6 +111,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { RouterLink } from 'vue-router'
 import { useCartStore } from '@/stores/cart.js'
 import { APIService } from '@/services/APIService.js'
 import Loading from './LoadingComponent.vue'
@@ -120,12 +128,14 @@ onMounted(() => {
 })
 
 const onRemoveClick = (id) => {
-  loading.value = true
   storeCart.removeItem(id)
   if (storeCart.count == 0) {
     router.push('/')
   } else {
-    loadFruits()
+    const found = fruits.find((fruit) => fruit.id === id)
+    if (found) {
+      fruits.splice(fruits.indexOf(found), 1)
+    }
   }
 }
 
@@ -158,8 +168,10 @@ const loadFruits = () => {
     })
   })
 
-  setTimeout(() => {
-    loading.value = false
-  }, 300)
+  if (loading.value) {
+    setTimeout(() => {
+      loading.value = false
+    }, 300)
+  }
 }
 </script>
