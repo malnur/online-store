@@ -1,17 +1,20 @@
 <template>
   <header class="sm:container mx-auto">
     <div class="h-11 my-5 flex justify-between">
+
       <!-- Logo -->
       <RouterLink class="flex gap-2 items-center" to="/">
         <img width="40" src="/logo.png" alt="logo" />
-        <span class="text-3xl font-semibold tracking-widest text-primary">Fruit Market</span>
+        <span class="text-3xl font-semibold tracking-widest text-primary hidden sm:flex"
+          >Fruit Market</span
+        >
       </RouterLink>
 
-      <div class="flex gap-8 items-center">
+      <div class="flex gap-2 lg:gap-4 xl:gap-8 items-center">
         <!-- Search -->
-        <form class="flex items-center border border-primary">
+        <div class="flex items-center border border-primary">
           <input
-            class="w-72 h-full p-2 text-base outline-0"
+            class="w-72 h-full p-2 text-base outline-0 hidden lg:block"
             type="text"
             placeholder="Product Search"
           />
@@ -21,40 +24,43 @@
               height="20"
               class="filter-white"
               src="../assets/icon/search.svg"
-              alt=""
+              alt="search icon"
             />
           </a>
-        </form>
+        </div>
 
         <!-- Account -->
         <div class="h-full flex justify-between items-center border border-secondary">
-          <div class="h-full px-4 flex items-center bg-secondary">
+          <div class="size-11 flex justify-center items-center bg-secondary">
             <img
-              width="28"
-              height="28"
+              width="24"
+              height="24"
               class="filter-white"
               src="../assets/icon/account-circle-fill.svg"
               alt="cart"
             />
           </div>
-          <div class="px-4 flex flex-col">
+          <div class="px-4 hidden xl:flex xl:flex-col">
             <span class="text-xs text-secondary">My Account</span>
             <a class="font-bold text-primary underline" href="#">Log In</a>
           </div>
         </div>
 
         <!-- Cart -->
-        <RouterLink class="h-full flex justify-between items-center border border-primary" to="/cart">
-          <div class="h-full px-4 flex items-center bg-primary">
+        <RouterLink
+          class="h-full flex justify-between items-center border border-primary"
+          to="/cart"
+        >
+          <div class="size-11 flex justify-center items-center bg-primary">
             <img
-              width="24"
-              height="24"
+              width="22"
+              height="22"
               class="filter-white"
               src="../assets/icon/shopping-cart.svg"
               alt="cart"
             />
           </div>
-          <div class="px-6 flex flex-col">
+          <div class="px-2 md:px-6 flex flex-col">
             <span class="text-xs text-secondary">{{ storeCart.count }} items</span>
             <span class="font-bold text-primary">${{ storeCart.total }}</span>
           </div>
@@ -63,48 +69,55 @@
     </div>
 
     <!-- Category & Icon -->
-    <div class="py-2 flex items-center justify-around border-t border-solid border-secondary">
-      <div class="basis-3/4 flex justify-between" v-for="(category, index) in categories" :key="index">
+    <div
+      class="py-2 flex items-center justify-around sm:justify-between xl:justify-around border-t border-solid border-secondary"
+    >
+      <div
+        class="xl:basis-3/4 flex justify-between"
+        v-for="(category, index) in categories"
+        :key="index"
+      >
         <RouterLink class="flex flex-col items-center" :to="'/list/' + category.id">
           <img
             :width="category.size"
             :height="category.size"
             class="filter-primary"
             :src="'/icon/' + category.image + '.svg'"
-            alt=""
+            alt="category"
+            :title="category.short"
           />
-          <span class="mt-1 text-sm font-bold text-primary">{{ category.short }}</span>
+          <span class="mt-1 text-sm font-bold text-primary hidden sm:block">{{ category.short }}</span>
         </RouterLink>
       </div>
 
       <!-- Contact -->
-      <div class="basis-1/4 flex justify-end gap-1 shrink-0">
+      <div class="basis-1/4 hidden xl:flex xl:justify-end xl:gap-1 shrink-0">
         <div class="flex justify-between items-center gap-2">
           <img
             width="24"
             height="24"
             class="filter-primary"
             src="../assets/icon/instagram-line.svg"
-            alt=""
+            alt="instagram"
           />
-          <span class="h-1 w-1 rounded-full bg-secondary" />
+          <span class="h-1 w-1 rounded-full bg-secondary hidden 2xl:block" />
           <img
             width="24"
             height="24"
             class="filter-primary"
             src="../assets/icon/facebook-circle-line.svg"
-            alt=""
+            alt="facebook"
           />
-          <span class="h-1 w-1 rounded-full bg-secondary" />
+          <span class="h-1 w-1 rounded-full bg-secondary hidden 2xl:block" />
           <img
             width="24"
             height="24"
             class="filter-primary"
             src="../assets/icon/mail-line.svg"
-            alt=""
+            alt="main"
           />
-          <span class="h-1 w-1 rounded-full bg-secondary" />
-          <span class="text-base text-primary">{{ storeCommon.phoneNumber }}</span>
+          <span class="h-1 w-1 rounded-full bg-secondary hidden 2xl:block" />
+          <span class="text-base text-primary hidden 2xl:block">{{ storeCommon.phoneNumber }}</span>
         </div>
       </div>
     </div>

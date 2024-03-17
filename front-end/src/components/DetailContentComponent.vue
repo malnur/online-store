@@ -1,134 +1,115 @@
 <template>
   <!-- Hero -->
   <section class="relative block">
-    <img class="absolute left-0 top-0 z-[1] w-full h-full object-cover" src="/img/261.jpg" alt="" />
+    <img
+      class="absolute left-0 top-0 z-[1] w-full h-full object-cover"
+      :src="`/img/${mainImage}`"
+      alt="background"
+    />
     <div class="relative z-[2] block pt-3 bg-primary bg-opacity-75">
-      <h1 class="py-12 text-5xl text-center tracking-wider uppercase text-white">
+      <h1 class="py-4 xl:py-12 text-3xl xl:text-5xl text-center tracking-wider uppercase text-white">
         {{ fruit.name }}
       </h1>
     </div>
   </section>
 
   <!-- Main Content -->
-  <main class="my-8 container mx-auto flex justify-center">
-    <!-- Images -->
-    <div class="basis-1/3 flex flex-col gap-2">
-      <img
-        class="w-96 h-96 mb-1 object-cover overflow-clip animate-fade"
-        :src="`/img/${mainImage}`"
-        alt=""
-      />
-      <div v-if="hasImages" class="w-full flex gap-2">
+  <main class="min-h-screen container mx-auto">
+    <Loading class="mt-4 text-center" :loading="loading" />
+
+    <!-- Fruit Details -->
+    <div class="my-8 flex flex-col lg:flex-row justify-center gap-4" v-show="!loading">
+
+      <!-- Images -->
+      <div class="basis-1/3 flex flex-col gap-2 justify-center items-center">
         <img
-          v-for="image in fruit?.images"
-          :key="image"
-          class="w-32 h-32 mb-1 object-cover overflow-clip animate-fade"
-          :src="`/img/${image}`"
-          alt=""
+          class="w-64 lg:w-96 h-64 lg:h-96 mb-1 object-cover overflow-clip"
+          :src="`/img/${mainImage}`"
+          alt="fruit picture"
         />
-      </div>
-    </div>
-
-    <!-- Details -->
-    <div class="basis-1/3 px-4 mb-8 flex flex-col">
-      <p class="mb-2 text-xl font-semibold uppercase text-secondary">About {{ fruit.name }}</p>
-      <p v-if="fruit.description" class="mb-2 text-base font-light text-gray-400">
-        {{ fruit.description }}
-      </p>
-      <hr class="my-4 h-[2px] bg-secondary" />
-      <div v-if="isOption" class="mb-2 flex items-center gap-1">
-        <p class="text-xs text-primary">Price per {{ fruit.info.uom }}:</p>
-        <span class="text-sm font-bold text-primary">£{{ fruit.info.value }}</span>
-      </div>
-      <div v-if="isOption" class="flex items-center gap-2">
-        <p class="text-primary">Selected option:</p>
-        <select
-          class="px-4 py-2 text-base border border-secondary outline-0"
-          v-model="currentOption"
-        >
-          <option v-for="option in fruit.options" :key="option._id" :value="option.value" selected>
-            ({{ option.value }}{{ option.uom }}) - £{{ option.price }}
-          </option>
-        </select>
-      </div>
-      <hr v-if="isOption" class="my-4 h-[2px] bg-secondary" />
-      <div v-show="!anavailable" class="flex justify-between items-center">
-        <p class="text-xl font-bold text-secondary">{{ total > 0 ? '£' + total : '' }}</p>
-        <div class="flex gap-2">
-          <input
-            class="w-16 h-10 pl-2 text-2xl border border-secondary outline-0"
-            type="number"
-            min="1"
-            v-model="count"
-          />
-          <a
-            class="px-4 py-2 flex bg-primary"
-            href="#"
-            @click="storeCart.addItem(fruit, count, currentOption)"
-          >
-            <img
-              width="20"
-              height="20"
-              class="filter-white"
-              src="../assets/icon/shopping-cart.svg"
-              alt=""
-            />
-            <span class="ml-1 uppercase text-base font-bold text-white">Add to Basket</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- Related Items -->
-  <section class="py-8 flex flex-col bg-gray">
-    <h3 class="mb-8 uppercase text-2xl text-center font-semibold tracking-widest text-primary">
-      RELATED PRODUCTS
-    </h3>
-    <div class="container mx-auto flex justify-center gap-4">
-      <!-- Cards -->
-      <div v-for="item in relations" :key="item._id" class="flex flex-col border-2 border-gray">
-        <RouterLink :to="`/detail/${item._id}`">
+        <div v-if="hasImages" class="w-full flex justify-center gap-2">
           <img
-            class="w-96 h-96 mb-1 object-cover overflow-clip animate-fade"
-            :src="`/img/${item.image}`"
-            alt=""
+            class="w-32 h-32 mb-1 object-cover overflow-clip"
+            :src="`/img/${image}`"
+            alt="fruit picture"
+            v-for="image in fruit?.images"
+            :key="image"
           />
-          <p class="mb-1 text-sm font-bold text-primary">{{ item.name }}</p>
-        </RouterLink>
-        <p class="mb-1 text-lg font-bold uppercase text-green">In stock</p>
-        <div class="mb-3 flex justify-between">
-          <p class="font-bold text-secondary">{{ item.uom }}</p>
-          <p class="font-bold text-secondary">£{{ item.price }}</p>
         </div>
-        <div class="flex justify-between">
-          <div class="px-4 py-2 flex bg-primary">
-            <img
-              width="20"
-              height="20"
-              class="filter-white"
-              src="../assets/icon/shopping-cart.svg"
-              alt=""
-            />
-            <p class="ml-1 uppercase text-base font-bold text-white">Add</p>
-          </div>
-          <p
-            class="px-4 py-2 border border-secondary text-center text-base font-bold text-secondary"
+      </div>
+
+      <!-- Details -->
+      <div class="basis-1/3 px-4 mb-8 flex flex-col">
+        <p class="mb-2 text-xl font-semibold uppercase text-secondary">About {{ fruit.name }}</p>
+        <p class="mb-2 text-base font-light text-gray-400" v-if="fruit.description">
+          {{ fruit.description }}
+        </p>
+        <hr class="my-4 h-[2px] bg-secondary" />
+        <div class="mb-2 flex items-center gap-1" v-if="isOption">
+          <p class="text-xs text-primary">Price per {{ fruit.info.uom }}:</p>
+          <span class="text-sm font-bold text-primary">${{ fruit.info.value }}</span>
+        </div>
+        <div class="flex items-center gap-2" v-if="isOption">
+          <p class="text-primary">Selected option:</p>
+          <select
+            class="px-4 py-2 text-base border border-secondary outline-0"
+            v-model="currentOption"
           >
-            Info
-          </p>
+            <option v-for="option in fruit.options" :key="option._id" :value="option.value">
+              ({{ option.value }}{{ option.uom }}) - ${{ option.price }}
+            </option>
+          </select>
+        </div>
+        <hr class="my-4 h-[2px] bg-secondary" v-if="isOption" />
+        <div class="flex justify-between items-center" v-show="!anavailable">
+          <p class="text-xl font-bold text-secondary">{{ total > 0 ? '$' + total : '' }}</p>
+          <div class="flex gap-2">
+            <input
+              class="w-16 h-10 pl-2 text-2xl border border-secondary outline-0"
+              type="number"
+              min="1"
+              v-model="count"
+              ref="input"
+            />
+            <a
+              class="px-4 py-2 flex bg-primary"
+              href="#"
+              @click="storeCart.addItem(fruit, count, currentOption)"
+            >
+              <img
+                width="20"
+                height="20"
+                class="filter-white"
+                src="../assets/icon/shopping-cart.svg"
+                alt="cart"
+              />
+              <span class="ml-1 uppercase text-base font-bold text-white hidden sm:block">Add to Basket</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  </section>
+
+    <!-- Related Items -->
+    <section class="py-8 flex flex-col bg-gray" v-show="!loading">
+      <h3 class="mb-8 uppercase text-2xl text-center font-semibold tracking-widest text-primary">
+        RELATED PRODUCTS
+      </h3>
+      <div class="container mx-auto flex justify-center gap-4 flex-wrap xl:flex-nowrap">
+        <ItemCardComponent :item="item" v-for="item in relations" :key="item._id" />
+      </div>
+    </section>
+  </main>
 </template>
 
 <script setup>
 import { useRoute } from 'vue-router'
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useCartStore } from '@/stores/cart.js'
 import { APIService } from '@/services/APIService.js'
 import { TextUtils } from '@/utils/text.js'
+import Loading from './LoadingComponent.vue'
+import ItemCardComponent from './ItemCardComponent.vue'
 
 const route = useRoute()
 const apiService = new APIService()
@@ -136,6 +117,8 @@ const storeCart = useCartStore()
 const text = new TextUtils()
 const mainImage = ref(null)
 const currentOption = ref(null)
+const input = ref(null)
+const loading = ref(true)
 const count = ref(1)
 const fruit = reactive({})
 const relations = reactive([])
@@ -153,8 +136,17 @@ const total = computed(() => {
 })
 
 onMounted(() => {
+  input.value.focus()
   loadFruit(getDefaultFruit())
 })
+
+watch(
+  () => route.params.fruit,
+  (newFruit) => {
+    loading.value = true
+    loadFruit(newFruit)
+  }
+)
 
 const getDefaultFruit = () => {
   return text.getUrlLastPart(currentRoute)
@@ -182,10 +174,17 @@ const loadRelations = () => {
       return fruit.relations.includes(item._id)
     })
     filtered.forEach((raw) => {
+      if (raw.uom != 'each') {
+        raw.option = parseInt(raw.uom)
+      }
       raw.image = raw.images[0]
       delete raw.images
     })
     relations.push(...filtered)
+
+    setTimeout(() => {
+      loading.value = false
+    }, 300)
   })
 }
 </script>

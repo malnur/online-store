@@ -29,7 +29,10 @@ const router = createRouter({
       name: 'cart',
       component: () => import('../views/CartView.vue')
     }
-  ]
+  ],
+  scrollBehavior() {
+    return { top: 0 }
+  }
 })
 
 export default router

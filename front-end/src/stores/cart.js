@@ -9,7 +9,6 @@ export const useCartStore = defineStore('cart', () => {
   const count = computed(() => {
     return content.length
   })
-
   const total = computed(() => {
     let result = 0
     content.forEach((item) => {
@@ -19,22 +18,24 @@ export const useCartStore = defineStore('cart', () => {
   })
 
   const addItem = (item, count, optionValue = null) => {
-    const obj = {}
-    obj.id = item._id
-    obj.name = item.name
-    obj.option = optionValue
-    obj.price = optionValue
-      ? item.options.find((item) => item.value === optionValue).price
-      : item.price
-    obj.count = count
-    content.push(obj)
+    const found = content.find(
+      (raw) => raw.id == item._id && (!optionValue || raw.option == optionValue)
+    )
+    if (found) {
+      found.count += count
+    } else {
+      const obj = {}
+      obj.id = item._id
+      obj.name = item.name
+      obj.option = optionValue
+      obj.price = item.options
+        ? item.options.find((item) => item.value === optionValue).price
+        : item.price
+      obj.count = count
+      content.push(obj)
+    }
 
-    notification.config({
-      placement: 'topLeft'
-    })
-    notification.success({
-      description: `Added ${count > 1 ? count + ' ' : ''}${item.name} to cart`
-    })
+    notify(`Added ${count > 1 ? count + ' ' : ''}${item.name} to cart`)
   }
 
   const removeItem = (itemId) => {
@@ -44,10 +45,7 @@ export const useCartStore = defineStore('cart', () => {
       if (index > -1) {
         content.splice(index, 1)
 
-        notification.error({
-          description: `Removed ${found.name} from cart`,
-          class: 'error'
-        })
+        notify(`Removed ${found.name} from cart`)
       }
     }
   }
@@ -56,14 +54,15 @@ export const useCartStore = defineStore('cart', () => {
     const bought = total.value
     content.splice(0)
 
-    notification.config({
-      placement: 'topRight'
-    })
-    notification.success({
-      message: 'You bought fruits for $' + bought,
-      description: 'Going, going, (almost) gone'
-    })
+    notify('Going, going, (almost) gone', 'You bought fruits for $' + bought)
   }
 
   return { basket, count, total, addItem, removeItem, reset }
 })
+
+const notify = (description, message = null) => {
+  notification.success({
+    message: message,
+    description: description
+  })
+}

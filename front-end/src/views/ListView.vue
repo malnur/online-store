@@ -1,11 +1,11 @@
 <template>
-  <HeaderComponent />
-  <ListContentComponent />
-  <FooterComponent />
+  <Header />
+  <Content />
+  <Footer />
 </template>
 
 <script setup>
-import HeaderComponent from '@/components/HeaderComponent.vue'
-import ListContentComponent from '@/components/ListContentComponent.vue'
-import FooterComponent from '@/components/FooterComponent.vue'
+import Header from '@/components/HeaderComponent.vue'
+import Content from '@/components/ListContentComponent.vue'
+import Footer from '@/components/FooterComponent.vue'
 </script>

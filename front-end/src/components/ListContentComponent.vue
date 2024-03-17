@@ -9,138 +9,92 @@
     <div class="container py-6 mx-auto flex justify-center text-white text-center">
       <div class="relative z-[2] block px-4 pt-3 bg-primary bg-opacity-75">
         <p class="text-xs uppercase text-secondary">Fresh Fruits</p>
-        <h1 class="text-4xl font-bold">{{ category?.name }}</h1>
+        <h1 class="text-2xl md:text-4xl font-bold">{{ category?.name }}</h1>
         <hr class="h-[2px] mt-3 mx-auto bg-secondary" />
       </div>
     </div>
   </section>
 
-  <main class="my-8 container mx-auto flex justify-between">
+  <main class="my-4 xl:my-8 container mx-auto flex justify-center xl:justify-between">
+
     <!-- Categories -->
-    <nav class="basis-1/5 self-start border border-primary">
+    <nav class="min-w-36 self-start border border-primary hidden xl:block">
       <p class="px-4 py-3 tracking-wider uppercase font-bold text-white bg-primary">Fresh Fruits</p>
       <a
+        class="flex justify-between px-4 py-3 uppercase cursor-pointer"
+        href="#"
         v-for="item in categories"
         :key="item._id"
-        class="flex justify-between px-4 py-3 uppercase cursor-pointer"
         :class="{ 'bg-highlight': item.active }"
         @click="onCategoryClick(item._id)"
-        href="#"
       >
         <span class="font-bold text-primary">{{ item.name }}</span>
         <img
-          v-if="item.active"
           width="20"
           height="20"
           class="filter-secondary"
           src="../assets/icon/play-fill.svg"
           alt="current item"
+          v-if="item.active"
         />
       </a>
     </nav>
-    <section class="ml-4 basis-4/5 flex flex-col">
-      <div class="mb-8 grid grid-cols-3 gap-7">
-        <!-- Item Cards -->
-        <div v-for="fruit in fruits" :key="fruit._id" class="flex flex-col border-2 border-gray">
-          <RouterLink :to="`/detail/${fruit._id}`">
-            <img
-              class="w-96 h-96 mb-1 object-cover overflow-clip animate-fade"
-              :src="`/img/${fruit.image}`"
-              alt=""
-            />
-            <p class="mb-1 text-sm font-bold text-primary">{{ fruit.name }}</p>
-          </RouterLink>
-          <p
-            class="mb-1 text-lg font-bold uppercase text-green"
-            :class="[isAnavailable(fruit.price) ? 'text-red-dark' : '']"
-          >
-            {{ isAnavailable(fruit.price) ? 'Temporarily Anavailable' : 'In stock' }}
-          </p>
-          <div class="mb-3 flex justify-between">
-            <p class="font-bold text-secondary">
-              {{ !isAnavailable(fruit.price) ? fruit.uom : '&nbsp;' }}
-            </p>
-            <p class="font-bold text-secondary">
-              {{ !isAnavailable(fruit.price) ? '£' + fruit.price : '&nbsp;' }}
-            </p>
-          </div>
-          <div
-            class="flex justify-between"
-            :class="{ 'justify-around': isAnavailable(fruit.price) }"
-          >
-            <a
-              v-show="!isAnavailable(fruit.price)"
-              class="px-4 py-2 flex bg-primary"
-              href="#"
-              @click="storeCart.addItem(fruit, 1)"
-            >
-              <img
-                width="20"
-                height="20"
-                class="filter-white"
-                src="../assets/icon/shopping-cart.svg"
-                alt=""
-              />
-              <p class="ml-1 uppercase text-base font-bold text-white">Add</p>
-            </a>
-            <p
-              class="px-4 py-2 border border-secondary text-center text-base font-bold text-secondary"
-            >
-              Info
-            </p>
-          </div>
-        </div>
+
+    <!-- Fruits -->
+    <section class="xl:ml-4 min-h-screen flex flex-col justify-center" v-show="!loading">
+      <Loading :loading="loading" />
+      <div class="mx-auto mb-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 lg:gap-7">
+        <ItemCardComponent :item="fruit" v-for="fruit in fruits" :key="fruit._id" />
       </div>
     </section>
   </main>
-
-  <!-- TODO Add loading page status. Fetching data takes time -->
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { RouterLink } from 'vue-router'
-import { useCartStore } from '@/stores/cart.js'
 import { APIService } from '@/services/APIService.js'
 import { TextUtils } from '@/utils/text.js'
+import Loading from './LoadingComponent.vue'
+import ItemCardComponent from './ItemCardComponent.vue'
 
 const DEFAULT_CATEGORY = 'apples-pears-and-rhubarb'
-
 const route = useRoute()
 const apiService = new APIService()
-const storeCart = useCartStore()
 const text = new TextUtils()
 const category = ref({})
 const categories = reactive([])
 const fruits = reactive([])
+const loading = ref(true)
 
 const currentRoute = computed(() => route.path)
-
 onMounted(() => {
   loadCategories()
 })
-
 watch(category, (current) => {
+  loading.value = true
   loadFruits(current._id)
 })
+watch(
+  () => route.params.category,
+  (newCategory) => flipActiveCategory(newCategory)
+)
 
-const onCategoryClick = (id) => {
-  const found = categories?.find((item) => item._id === id)
-  if (found && found._id !== category.value._id) {
-    category.value.active = false
-    found.active = true
-    category.value = found
+const onCategoryClick = (id) => flipActiveCategory(id)
+
+const flipActiveCategory = (newId) => {
+  if (category.value._id === newId) {
+    return
   }
+  category.value.active = false
+  const found = categories?.find((item) => item._id === newId)
+  found.active = true
+  category.value = found
 }
 
 const getDefaultCategory = () => {
   const result = text.getUrlLastPart(currentRoute)
   return result === null ? DEFAULT_CATEGORY : result
-}
-
-const isAnavailable = (value) => {
-  return value === null
 }
 
 const loadCategories = () => {
@@ -158,10 +112,16 @@ const loadFruits = (categoryId) => {
   fruits.splice(0)
   apiService.getFruitsOfCategory(categoryId).then((data) => {
     data.forEach((raw) => {
+      if (raw.uom != 'each') {
+        raw.option = parseInt(raw.uom)
+      }
       raw.image = raw.images[0]
       delete raw.images
       fruits.push(raw)
     })
   })
+  setTimeout(() => {
+    loading.value = false
+  }, 300)
 }
 </script>
